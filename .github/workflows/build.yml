@@ -1,33 +1,26 @@
-name: Build Flutter APK
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("dev.flutter.flutter-gradle-plugin")
+}
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+android {
+    namespace = "com.example.warsh_quran_app"
+    compileSdk = 34
+    ndkVersion = "27.0.12077973"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 
-    steps:
-    - uses: actions/checkout@v3
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
 
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: '17'
-
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.19.0'
-        channel: 'stable'
-
-    - name: Install dependencies
-      run: flutter pub get
-
-    - name: Build APK
-      run: flutter build apk --split-per-abi
-      
+    defaultConfig {
+        applicationId = "com.example.warshquran"
+        minSdk = 21
+        targetSdk = 34
+    }
+}
