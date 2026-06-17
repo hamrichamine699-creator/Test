@@ -1,52 +1,26 @@
-name: Build Flutter APK
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("dev.flutter.flutter-gradle-plugin")
+}
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+android {
+    namespace = "com.example.warsh_quran_app"
+    compileSdk = 34
+    ndkVersion = "27.0.12077973"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.6'
-          channel: 'stable'
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      # الخطوة السحرية لإجبار الحزمة الخارجية على استخدام مساحة الاسم ومنع الخطأ
-      - name: Fix speech_to_text package namespace
-        run: |
-          PUB_CACHE_DIR="$HOME/.pub-cache/hosted/pub.dev"
-          SPEECH_DIR=$(ls -d $PUB_CACHE_DIR/speech_to_text-* 2>/dev/null | head -n 1)
-          if [ -d "$SPEECH_DIR/android" ]; then
-            echo "android { namespace 'com.csdcorp.speech_to_text' }" >> "$SPEECH_DIR/android/build.gradle"
-            echo "تم إصلاح الحزمة الخارجية بنجاح!"
-          fi
-
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-          
+    defaultConfig {
+        applicationId = "com.example.warshquran"
+        minSdk = 21
+        targetSdk = 34
+    }
+}
